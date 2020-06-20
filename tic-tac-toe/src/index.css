@@ -88,3 +88,33 @@ ol, ul {
 .history-board>.active-board:hover {
     background-color: #ff0000;
 }
+
+.history-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.history-title {
+    display: inline-block;
+    font: 1.5rem "Century Gothic", Futura, sans-serif;
+    padding: 20px;
+}
+
+.sort-button {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    background-color: #fff;
+    background-image: url("./images/sort-button-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border: 0;
+    outline: 0;
+    transition: 0.5s;
+}
+
+.sort-button:hover {
+    transform: rotate(360deg);
+}

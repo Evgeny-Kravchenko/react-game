@@ -10,6 +10,10 @@ function Square(props) {
   );
 }
 
+function SortButton(props) {
+  return <button className="sort-button" onClick={props.onReverse}></button>;
+}
+
 class Board extends React.Component {
   renderSquare(i) {
     return (
@@ -62,7 +66,15 @@ class History extends React.Component {
         />
       );
     });
-    return <div className={"history-board"}>{moves}</div>;
+    return (
+      <div>
+        <div className="history-title-container">
+          <h2 className={"history-title"}>История ходов</h2>
+          <SortButton onReverse={() => this.props.onSort()} />
+        </div>
+        <div className={"history-board"}>{moves}</div>
+      </div>
+    );
   }
 }
 
@@ -77,25 +89,56 @@ class Game extends React.Component {
       ],
       xIsNext: true,
       stepNumber: 0,
+      isReverse: false,
     };
     this.jumpTo = this.jumpTo.bind(this);
   }
 
+  sort() {
+    const step = this.state.history.length - this.state.stepNumber - 1;
+    this.setState({
+      stepNumber: step,
+      history: this.state.history.reverse(),
+      isReverse: !this.state.isReverse,
+    });
+  }
+
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
+    let history;
+    let current;
+    if (!this.state.isReverse) {
+      history = this.state.history.slice(0, this.state.stepNumber + 1);
+      current = history[history.length - 1];
+    } else {
+      history = this.state.history.slice(
+        -(this.state.history.length - this.state.stepNumber)
+      );
+      current = history[0];
+    }
     const squares = [...current.squares];
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState({
-      history: history.concat([
+    let result;
+    if (!this.state.isReverse) {
+      result = [
+        ...history,
         {
           squares: squares,
         },
-      ]),
-      stepNumber: history.length,
+      ];
+    } else {
+      result = [
+        {
+          squares: squares,
+        },
+        ...history,
+      ];
+    }
+    this.setState({
+      history: result,
+      stepNumber: this.state.isReverse ? 0 : history.length,
       xIsNext: !this.state.xIsNext,
     });
   }
@@ -123,6 +166,7 @@ class Game extends React.Component {
 
     return (
       <div className="game">
+        <div className={"game-status"}>{status}</div>
         <div className="game-board">
           <Board
             squares={current.squares}
@@ -130,12 +174,12 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
-          <div className={"game-status"}>{status}</div>
           <History
             history={history}
             jumpTo={this.jumpTo}
             onClick={(move) => this.jumpTo(move)}
             stepNumber={stepNumber}
+            onSort={() => this.sort()}
           />
         </div>
       </div>
