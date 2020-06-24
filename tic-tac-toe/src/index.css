@@ -118,3 +118,8 @@ ol, ul {
 .sort-button:hover {
     transform: rotate(360deg);
 }
+
+.winner {
+    background-color: rgba(0, 255, 0, 0.5);
+    transition: 0.5s;
+}
